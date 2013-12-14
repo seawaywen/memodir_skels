@@ -1,0 +1,37 @@
+#---------------
+# Python bytecode:
+*.py[co]
+
+
+#---------------
+# Packaging files:
+*.egg*
+/build
+/dist
+
+#---------------
+# Editor temp files:
+*.swp
+*~
+*.swp
+tmp/*
+.tmp_*~
+.DS_Store
+
+
+#---------------
+# Logs:
+*.log
+
+
+#---------------
+# Project ignore
+.idea
+.idea/*
+
+
+
+#---------------
+# Others
+.gitmodules
+
