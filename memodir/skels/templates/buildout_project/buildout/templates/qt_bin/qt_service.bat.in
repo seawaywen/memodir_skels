@@ -1,0 +1,25 @@
+@echo off
+
+if [%1] == [\?] GOTO HELP
+if "%1" == "start" GOTO START
+if "%1" == "stop" GOTO STOP
+if "%1" == "restart" GOTO RESTART
+
+GOTO HELP
+exit /B 0
+
+:START
+python ${buildout_path}\bin\python-script.py ${root_path}\deploy.py -s
+exit /B 0
+
+:STOP
+python ${buildout_path}\bin\python-script.py ${root_path}\deploy.py -k
+exit /B 0
+
+:RESTART
+python ${buildout_path}\bin\python-script.py ${root_path}\deploy.py -e
+exit /B 0
+
+:HELP
+echo "Usage: $SCRIPTNAME {start|stop|restart|new-instance|collect-static}"
+exit /B 0

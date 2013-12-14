@@ -1,0 +1,107 @@
+#------------------------
+#uwsgi settings
+[uwsgi-make]
+recipe = plone.recipe.command
+command =
+    cd ${uwsgi:location}
+#    make -f Makefile
+    export CC=gcc
+    ${buildout:directory}/bin/python uwsgiconfig.py --build
+#    python uwsgiconfig.py --build
+    cp uwsgi ${buildout:directory}/bin/uwsgi
+    cp nginx/uwsgi_params ${buildout:directory}/etc/nginx
+    cp ${buildout:directory}/bin/django_dev.wsgi ${buildout:directory}/qt_atrr/django_wsgi.py
+
+[uwsgi-conf]
+socket-path = ${buildout:directory}/var/run/uwsgi.sock
+pid-path = ${buildout:directory}/var/run/uwsgi.pid
+log-path = ${buildout:directory}/var/log/uwsgi.log
+python-path = ${buildout:directory}
+
+
+#------------------------
+[memcached-ctl]
+recipe = ore.recipe.fs:mkfile
+path = ${buildout:bin-directory}/memcached
+mode = 0755
+content =
+ #!/bin/sh
+ PIDFILE=${memcached:location}/memcached.pid
+    case "$1" in
+      start)
+       ${memcached:location}/bin/memcached -d -P $PIDFILE
+        ;;
+      stop)
+        kill `cat $PIDFILE`
+        ;;
+      restart|force-reload)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+      *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+        exit 1
+        ;;
+    esac
+
+[start_memcached]
+recipe = collective.recipe.cmd
+on_install = true
+cmds = ${buildout:directory}/bin/memcached start
+
+[restart_memcached]
+recipe = collective.recipe.cmd
+on_update = true
+cmds = ${buildout:directory}/bin/memcached restart
+
+
+[setup_env]
+recipe = collective.recipe.cmd
+on_install = true
+on_update = true
+cmds =
+  export PATH=${buildout:directory}/qt_bin:$PATH
+  env | grep PATH
+
+
+#------------------------
+#qt server commands settings
+[qt_service]
+recipe = collective.recipe.template
+input = ${buildout:directory}/templates/qt_bin/qt_service.sh.in
+output = ${buildout:directory}/../qt_bin/qt_service.sh
+mode = 0755
+buildout_path = ${buildout:directory}
+root_path = ${buildout:directory}/..
+
+[qt_service_startup]
+recipe = collective.recipe.template
+input = ${buildout:directory}/templates/qt_bin/qt_startup.sh.in
+output = ${buildout:directory}/../startup.sh
+mode = 0755
+buildout_path = ${buildout:directory}
+root_path = ${buildout:directory}/..
+
+[qt_service_shutdown]
+recipe = collective.recipe.template
+input = ${buildout:directory}/templates/qt_bin/qt_shutdown.sh.in
+output = ${buildout:directory}/../shutdown.sh
+mode = 0755
+buildout_path = ${buildout:directory}
+root_path = ${buildout:directory}/..
+
+
+#------------------------
+#Cleanup settings
+[clean_env]
+recipe = collective.recipe.cmd
+on_install = true
+on_update = true
+cmds =
+    rm -rf ${buildout:directory}/bin
+    rm -rf ${buildout:directory}/eggs
+    rm -rf ${buildout:directory}/parts
+    rm -rf ${buildout:directory}/develop-eggs
+    rm -rf ${buildout:directory}/etc
+    rm -rf ${buildout:directory}/var

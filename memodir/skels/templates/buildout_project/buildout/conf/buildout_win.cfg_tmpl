@@ -1,0 +1,27 @@
+[buildout]
+extends =
+    buildout_base.cfg
+    buildout_service_win.cfg
+
+parts +=
+    nginx
+    nginx-conf
+
+#    memcached
+#    memcached-ctl
+#    memcached-install
+#    memcached-restart
+
+#------------------------
+#nginx settings for Windows
+[nginx]
+recipe = hexagonit.recipe.download
+url = ${buildout:download-cache}/dist/nginx-1.5.6.zip
+
+
+#------------------------
+#memcached settings for Windows
+[memcached]
+recipe = hexagonit.recipe.download
+ignore-existing = true
+url = ${buildout:download-cache}/dist/memcached-1.2.6-win32-with-msvcr71-bin.zip

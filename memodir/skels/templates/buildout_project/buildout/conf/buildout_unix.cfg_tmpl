@@ -1,0 +1,65 @@
+[buildout]
+extends =
+    buildout_base.cfg
+    buildout_service_unix.cfg
+
+parts +=
+#    env
+#    uwsgi
+#    uwsgi-make
+    pcre-source
+
+    nginx
+    nginx-conf
+
+#    libevent
+#    memcached
+#    memcached-ctl
+#    start_memcached
+#    restart_memcached
+
+
+
+#------------------------
+#nginx dependent library
+[pcre-source]
+recipe = hexagonit.recipe.download
+url = ${buildout:download-cache}/dist/pcre-8.33.tar.gz
+strip-top-level-dir = true
+ignore-existing = true
+hash-name = false
+
+#------------------------
+#nginx settings
+[nginx]
+recipe = zc.recipe.cmmi
+url = ${buildout:download-cache}/dist/nginx-1.5.6.tar.gz
+ignore-existing = true
+extra_options =
+    --conf-path=${buildout:directory}/etc/nginx/nginx.conf
+    --error-log-path=${buildout:directory}/../logs/nginx-error.log
+    --http-log-path=${buildout:directory}/../logs/nginx-access.log
+    --pid-path=${buildout:directory}/var/run/nginx.pid
+    --lock-path=${buildout:directory}/var/lock/nginx.lock
+    --with-pcre=${pcre-source:location}
+
+#------------------------
+#uwsgi settings
+[uwsgi]
+recipe = gocept.download
+url = ${buildout:download-cache}/dist/uwsgi-1.4.5.tar.gz
+strip-top-level-dir = true
+md5sum = 391ff016fe8d8dbd83e62e9b86e2406f
+
+#------------------------
+#libevent
+[libevent]
+recipe = hexagonit.recipe.cmmi
+url = http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
+
+#------------------------
+#memcached
+[memcached]
+recipe = hexagonit.recipe.cmmi
+url = ${buildout:download-cache}/dist/memcached-1.4.15.tar.gz
+configure-options = --with-libevent=${libevent:location}

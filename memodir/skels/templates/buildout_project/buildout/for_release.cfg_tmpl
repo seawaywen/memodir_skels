@@ -1,0 +1,21 @@
+[ctl]
+extends =
+
+[buildout:windows]
+extends = conf/buildout_win.cfg
+
+parts +=
+    prod_package
+
+[buildout:posix]
+extends = conf/buildout_unix.cfg
+
+parts +=
+    prod_package
+
+
+
+[prod_package]
+recipe = zc.recipe.egg
+eggs = ${buildout:eggs}
+    ${product_package:eggs}

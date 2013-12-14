@@ -1,0 +1,17 @@
+#!/bin/sh
+
+   case "$1" in
+     start)
+      python ${buildout_path}/bin/python ${root_path}/deploy.py -s
+       ;;
+     stop)
+       python ${buildout_path}/bin/python ${root_path}/deploy.py -k
+       ;;
+     restart|force-reload)
+       python ${buildout_path}/bin/python ${root_path}/deploy.py -e
+       ;;
+     *)
+       echo "Usage: $SCRIPTNAME {start|stop|restart|new-instance|collect-static}" >&2
+       exit 1
+       ;;
+   esac

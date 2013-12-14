@@ -1,0 +1,71 @@
+daemon off;
+worker_processes  2;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  ${log_path}nginx-access.log;
+    error_log   ${log_path}nginx-error.log;
+
+    sendfile  on;
+
+    keepalive_timeout  65;
+
+    gzip  on;
+    gzip_comp_level 2;
+    gzip_proxied  any;
+    gzip_types  text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    server {
+        listen       ${port};
+        server_name  ${server_name};
+
+        client_max_body_size 150M;
+
+        proxy_pass_header Server;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_next_upstream error;
+
+        proxy_connect_timeout      90;
+        proxy_send_timeout         90;
+        proxy_read_timeout         9000;
+        proxy_buffer_size          4k;
+        proxy_buffers              4 32k;
+        proxy_busy_buffers_size    64k;
+        proxy_temp_file_write_size 64k;
+
+
+        location ~ ^/static/ {
+            root  ${static_path};
+            expires 30d;
+            access_log  off;
+        }
+
+        location ~ ^/media/ {
+            root  ${media_path};
+            access_log  off;
+        }
+
+        rewrite /favicon.ico /static/img/favicon.ico;
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   ${static_path}/error_pages;
+        }
+
+
+        include ${apps_conf_path};
+    }
+}

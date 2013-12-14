@@ -1,0 +1,23 @@
+[buildout]
+extends =
+    buildout_base_dev.cfg
+    buildout_service_win.cfg
+
+parts +=
+    nginx
+    nginx-conf
+
+#------------------------
+#nginx settings for Windows
+[nginx]
+recipe = hexagonit.recipe.download
+ignore-existing = true
+url = http://nginx.org/download/nginx-1.5.6.zip
+
+
+#------------------------
+#memcached settings for Windows
+[memcached]
+recipe = hexagonit.recipe.download
+ignore-existing = true
+url = http://code.jellycan.com/files/memcached-1.2.6-win32-bin.zip

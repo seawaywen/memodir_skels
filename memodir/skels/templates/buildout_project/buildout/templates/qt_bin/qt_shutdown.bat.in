@@ -1,0 +1,3 @@
+@echo off
+
+python ${buildout_path}\bin\python-script.py ${root_path}\deploy.py -k

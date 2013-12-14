@@ -1,0 +1,19 @@
+[dependent_libs]
+core_eggs =
+    django
+
+    django-braces
+    django-model-utils
+    django-crispy-forms
+    django-floppyforms
+
+    django-tastypie
+
+    django-pipeline
+
+
+dev_eggs =
+    django-nose
+    django-debug-toolbar
+
+    South

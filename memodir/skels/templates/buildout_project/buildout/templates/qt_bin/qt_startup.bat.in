@@ -1,0 +1,69 @@
+@echo off
+
+set ROOT = ${buildout_path}\..
+set DEPLOY_PY_NAME=%ROOT%\deploy.py
+set DEPLOY_PY_UPGRADE_NAME=%ROOT%\deploy.py.upgrade
+
+set QT_ROOT=%ROOT%\packages
+set QT_UPGRADE_ROOT = %QT_ROOT%\upgrade
+
+set QT_ATRR=%QT_ROOT%\qt_atrr
+set QT_UPGRADE_ATRR=%QT_UPGRADE_ROOT%\qt_atrr
+
+set QT_HOST=%QT_ROOT%\qt_host
+set QT_UPGRADE_HOST=%QT_UPGRADE_ROOT%\qt_host
+
+
+
+if exist %DEPLOY_PY_UPGRADE_NAME% (
+    echo [UPGRADE] Detect the upgrade patch file
+    echo.
+    echo [UPGRADE] Get stopping all the service first...
+    python C:\Projects\qt_atrr\buildout\bin\python-script.py C:\Projects\qt_atrr\buildout\..\deploy.py -a
+)
+
+
+rem ----- Execute Upgrade Process ---------------------------------------
+if not exist %DEPLOY_PY_UPGRADE_NAME% goto no_deploy_script_upgrade
+if not exist %DEPLOY_PY_NAME% goto no_deploy_script_upgrade
+echo [UPGRADE] Delete the old deploy.py script...
+echo.
+DEL %DEPLOY_PY_NAME% > nul
+echo [UPGRADE] Apply the new deploy.py script...
+echo.
+echo f|xcopy %DEPLOY_PY_UPGRADE_NAME% %DEPLOY_PY_NAME% /Q
+DEL %DEPLOY_PY_UPGRADE_NAME% > nul
+
+
+:no_deploy_script_upgrade
+if not exist %QT_ATRR% goto no_atrr_upgrade
+if not exist %QT_UPGRADE_ROOT%\qt_atrr goto no_atrr_upgrade
+echo [UPGRADE] Delete the old qt_atrr...
+echo.
+DEL /Q /S %QT_ATRR%\ > nul
+echo [UPGRADE] Apply the new version of qt_atrr...
+echo.
+xcopy %QT_UPGRADE_ATRR% %QT_ATRR% /E /H /Q
+
+
+:no_atrr_upgrade
+if not exist %QT_HOST% goto no_host_upgrade
+if not exist %QT_UPGRADE_HOST% goto no_host_upgrade
+echo [UPGRADE] Delete the old qt_host...
+echo.
+DEL /Q /S %QT_HOST%\ > nul
+echo [UPGRADE] Apply the new version of qt_host...
+echo.
+xcopy %QT_UPGRADE_HOST% %QT_HOST% /E /H /Q
+
+
+:no_host_upgrade
+if not exist %QT_UPGRADE_ATRR% goto upgrade_end
+echo [UPGRADE] Clean the patch files...
+echo.
+python ${buildout_path}\bin\python-script.py %ROOT%\deploy.py -u
+echo [UPGRADE] Upgrade Done, now restarting the server..."
+echo.
+
+:upgrade_end
+python ${buildout_path}\bin\python-script.py %ROOT%\deploy.py -e

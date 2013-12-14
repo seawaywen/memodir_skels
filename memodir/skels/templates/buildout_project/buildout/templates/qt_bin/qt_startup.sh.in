@@ -1,0 +1,73 @@
+#!/bin/bash
+
+ROOT=${buildout_path}/..
+
+
+DEPLOY_PY_NAME=$ROOT/deploy.py
+DEPLOY_PY_UPGRADE_NAME=$ROOT/deploy.py.upgrade
+
+QT_ROOT=$ROOT/packages
+QT_UPGRADE_ROOT=$QT_ROOT/upgrade
+
+QT_ATRR=$QT_ROOT/qt_atrr
+QT_UPGRADE_ATRR=$QT_UPGRADE_ROOT/qt_atrr
+
+QT_HOST=$QT_ROOT/qt_host
+QT_UPGRADE_HOST=$QT_UPGRADE_ROOT/qt_host
+
+
+if [ -e $DEPLOY_PY_UPGRADE_NAME ] || [ -e "$QT_UPGRADE_HOST" ] ||[ -e $QT_UPGRADE_ATRR ]
+then
+    echo "[UPGRADE] Detect the upgrade patch file"
+    echo " "
+    echo "[UPGRADE] Get stopping all the service first..."
+    $ROOT/buildout/bin/python $ROOT/deploy.py -a
+fi
+
+if [ -f $DEPLOY_PY_UPGRADE_NAME ] && [ -f $DEPLOY_PY_NAME ]
+then
+    echo "[UPGRADE] Delete the old deploy.py script..."
+    echo " "
+    rm  $DEPLOY_PY_NAME
+    echo "[UPGRADE] Apply the new deploy.py script..."
+    echo " "
+    cp $DEPLOY_PY_UPGRADE_NAME $DEPLOY_PY_NAME
+    rm $DEPLOY_PY_UPGRADE_NAME
+fi
+
+if [ -e $QT_ATRR ] &&  [ -e $QT_UPGRADE_ATRR ]
+then
+    echo "[UPGRADE] Delete the old qt_atrr..."
+    echo " "
+    rm -rf $QT_ATRR
+    echo "[UPGRADE] Apply the new version of qt_atrr..."
+    echo " "
+    cp -rf $QT_UPGRADE_ATRR $QT_ATRR
+fi
+
+
+if [ -e $QT_HOST ] && [ -e $QT_UPGRADE_HOST ]
+then
+    echo "[UPGRADE] Delete the old qt_host..."
+    echo " "
+    rm -rf $QT_HOST
+    echo "[UPGRADE] Apply the new version of qt_host..."
+    echo " "
+    cp -rf $QT_UPGRADE_HOST $QT_HOST
+fi
+
+
+if [ -e $QT_UPGRADE_ROOT ]
+then
+    echo "[UPGRADE] Clean the patch files..."
+    echo " "
+    $ROOT/buildout/bin/python $ROOT/deploy.py -u
+    echo "[UPGRADE] Upgrade Done, now restarting the server..."
+    echo " "
+fi
+
+$ROOT/buildout/bin/python $ROOT/deploy.py -e
+exit 0
+
+
+

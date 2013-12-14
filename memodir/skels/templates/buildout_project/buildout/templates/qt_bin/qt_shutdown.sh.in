@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python ${buildout_path}/bin/python ${root_path}/deploy.py -k

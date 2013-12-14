@@ -1,0 +1,66 @@
+[build_package]
+recipe = qt.recipes.build:build_package
+install_dir = atrr
+packages = ${product_package:eggs}
+
+
+[upload_package]
+recipe = qt.recipes.build:upload_package
+local_egg_dir = atrr
+server_egg_dir = /var/www/html/eggs
+server_host = qt.hq.k.grp
+username = qtdeploy
+password = +5OCy%xWkiq8e%Cg
+
+
+[build_dist]
+recipe = qt.recipes.build:build_dist
+package_name = qt_atrr_20131105
+clean_dirs = ${ctl:clean_dirs}
+version = 3.0STD0
+zip_name = qt_atrr
+
+
+# Can't keep the empty line in the section
+[ctl:posix]
+clean_dirs =
+    logs
+    packages/qt.core
+    packages/qt.deploy
+    packages/qt.recipes.build
+    static
+    media
+    conf
+    dev_docs
+    buildout/eggs
+#    buildout/downloads
+    buildout/bin
+    buildout/develop-eggs
+    buildout/parts
+    buildout/var
+    buildout/etc
+    startup.sh
+    shutdown.sh
+    sh
+    qt_bin
+
+[ctl:windows]
+clean_dirs =
+    logs
+    packages\qt.core
+    packages\qt.deploy
+    packages\qt.recipes.build
+    static
+    media
+    conf
+    dev_docs
+    buildout\eggs
+#    buildout\downloads
+    buildout\bin
+    buildout\develop-eggs
+    buildout\parts
+    startup.bat
+    shutdown.bat
+    sh
+    qt_bin
+

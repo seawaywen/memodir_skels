@@ -1,0 +1,64 @@
+[buildout]
+extends =
+    buildout_base.cfg
+    buildout_build.cfg
+
+newest = false
+
+install-from-cache = false
+#offline = true
+
+#download-cache = downloads_dev
+#extends-cache = downloads_dev
+
+
+find-links +=
+    http://dist.plone.org/thirdparty/
+    https://pypi.python.org/pypi
+    https://github.com/seawaywen/django-dajaxice/archive/0.5.6.zip
+    https://github.com/seawaywen/django-dajax/archive/0.9.3.zip
+
+parts =
+    python_dev
+    django_qt_atrr_dev
+    django_qt_host_dev
+
+    collectstatic
+
+#    qt_service
+    qt_service_startup
+    qt_service_shutdown
+
+develop +=
+    ../packages/qt.core
+    ../packages/qt.deploy
+    ../packages/qt.recipes.build
+
+
+#------------------------
+#project DEV mode setting
+[django_qt_atrr_dev]
+recipe = djangorecipe
+project = qt_atrr
+projectegg = qt_atrr
+settings = settings.local
+test = qt_atrr
+eggs = ${django_qt_atrr:eggs}
+    ${dependent_libs:dev_eggs}
+wsgi = true
+
+[django_qt_host_dev]
+recipe = djangorecipe
+project = qt_host
+projectegg = qt_host
+settings = settings.local
+test = qt_host
+eggs = ${django_qt_host:eggs}
+    ${dependent_libs:dev_eggs}
+wsgi = true
+
+[python_dev]
+recipe = zc.recipe.egg
+interpreter = python_dev
+eggs = ${python:eggs}
+    ${dependent_libs:dev_eggs}

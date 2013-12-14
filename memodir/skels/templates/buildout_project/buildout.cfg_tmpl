@@ -1,0 +1,8 @@
+[ctl]
+extends =
+
+[buildout:windows]
+extends = conf/buildout_win_dev.cfg
+
+[buildout:posix]
+extends = conf/buildout_unix_dev.cfg
