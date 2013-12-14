@@ -3,7 +3,7 @@
 [memcached-install]
 recipe = collective.recipe.cmd
 on_install = true
-cmds = ${buildout:directory}/bin/memcached.bat
+cmds = \${buildout:directory}/bin/memcached.bat
 
 [memcached-restart]
 recipe = collective.recipe.cmd
@@ -18,37 +18,37 @@ cmds =
 
 [memcached-ctl]
 recipe = collective.recipe.template
-input = ${buildout:directory}/templates/memcached/memcached.bat.in
-output = ${buildout:directory}/bin/memcached.bat
+input = \${buildout:directory}/templates/memcached/memcached.bat.in
+output = \${buildout:directory}/bin/memcached.bat
 
-memcached_dir = ${memcached:location}
+memcached_dir = \${memcached:location}
 
 
 #------------------------
 #qt server commands settings
 [qt_service]
 recipe = collective.recipe.template
-input = ${buildout:directory}/templates/qt_bin/qt_service.bat.in
-output = ${buildout:directory}/../qt_bin/qt_service.bat
+input = \${buildout:directory}/templates/qt_bin/qt_service.bat.in
+output = \${buildout:directory}/../qt_bin/qt_service.bat
 
-buildout_path = ${buildout:directory}
-root_path = ${buildout:directory}\..
+buildout_path = \${buildout:directory}
+root_path = \${buildout:directory}\..
 
 [qt_service_startup]
 recipe = collective.recipe.template
-input = ${buildout:directory}/templates/qt_bin/qt_startup.bat.in
-output = ${buildout:directory}/../startup.bat
+input = \${buildout:directory}/templates/qt_bin/qt_startup.bat.in
+output = \${buildout:directory}/../startup.bat
 
-buildout_path = ${buildout:directory}
-root_path = ${buildout:directory}\..
+buildout_path = \${buildout:directory}
+root_path = \${buildout:directory}\..
 
 [qt_service_shutdown]
 recipe = collective.recipe.template
-input = ${buildout:directory}/templates/qt_bin/qt_shutdown.bat.in
-output = ${buildout:directory}/../shutdown.bat
+input = \${buildout:directory}/templates/qt_bin/qt_shutdown.bat.in
+output = \${buildout:directory}/../shutdown.bat
 
-buildout_path = ${buildout:directory}
-root_path = ${buildout:directory}\..
+buildout_path = \${buildout:directory}
+root_path = \${buildout:directory}\..
 
 
 #------------------------
@@ -58,9 +58,9 @@ recipe = collective.recipe.cmd
 on_install = true
 on_update = true
 cmds =
-    rd /S/Q ${buildout:directory}\\bin
-    rd /S/Q ${buildout:directory}\\eggs
-    rd /S/Q ${buildout:directory}\\parts
-    rd /S/Q ${buildout:directory}\\develop-eggs
-    rd /S/Q ${buildout:directory}\\etc
-    rd /S/Q ${buildout:directory}\\var
+    rd /S/Q \${buildout:directory}\\bin
+    rd /S/Q \${buildout:directory}\\eggs
+    rd /S/Q \${buildout:directory}\\parts
+    rd /S/Q \${buildout:directory}\\develop-eggs
+    rd /S/Q \${buildout:directory}\\etc
+    rd /S/Q \${buildout:directory}\\var

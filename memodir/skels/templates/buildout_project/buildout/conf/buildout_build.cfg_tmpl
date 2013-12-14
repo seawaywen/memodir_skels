@@ -1,7 +1,7 @@
 [build_package]
 recipe = qt.recipes.build:build_package
 install_dir = atrr
-packages = ${product_package:eggs}
+packages = \${product_package:eggs}
 
 
 [upload_package]
@@ -16,7 +16,7 @@ password = +5OCy%xWkiq8e%Cg
 [build_dist]
 recipe = qt.recipes.build:build_dist
 package_name = qt_atrr_20131105
-clean_dirs = ${ctl:clean_dirs}
+clean_dirs = \${ctl:clean_dirs}
 version = 3.0STD0
 zip_name = qt_atrr
 

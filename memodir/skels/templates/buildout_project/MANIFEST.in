@@ -1,0 +1,7 @@
+include README.rst
+include CHANGES
+include LICENSE
+include CONTRIBUTORS
+include AUTHORS
+recursive-include memodir/skels *.txt *.py
+recursive-include memodir/skels/templates *.txt *.py *.*tmpl

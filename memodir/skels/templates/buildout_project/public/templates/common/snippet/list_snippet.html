@@ -1,0 +1,68 @@
+{% if object_list  %}
+<table class="table table-bordered  mailinbox">
+    <thead>
+    <tr>
+        <th class="head1 aligncenter width4">
+            <input type="checkbox" name="checkall" class="checkall" style="opacity: 0;">
+        </th>
+        {% for header in header_list %}
+          <th {% if header.id %} id="{{ header.id }}" {% endif %} {% if header.klass %} class="{{ header.klass }}" {% endif %}>{{ header.title|capfirst }}</th>
+        {% endfor %}
+        {% if not readonly %}
+          {% if operation_list %}
+            <th id="operation" colspan="{{ operation_list|length }}" ></th>
+          {% endif %}
+        {% endif %}
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for object in object_list %}
+      <tr {% if object.style %} style="{{ object.style }}" {% endif %} {% if object.klass %} class="{{ object.klass }}" {% endif %}>
+        <td>
+          <div class="checker"><input type="checkbox" style="opacity: 0;"></div>
+        </td>
+
+        {% for field in object.field_list %}
+          <td {% if field.style %} style="{{ field.style }}" {% endif %} {% if field.klass %} class="{{ field.klass }}" {% endif %}>
+            {% if field.url %}<a href="{{ field.url }}">{% endif %}
+            {% autoescape off %}{{ field.value }}{% endautoescape %}
+            {% if field.url %}</a>{% endif %}
+          </td>
+        {% endfor %}
+        {% if not readonly %}
+
+          {% for operation in object.operation_list %}
+            {% ifequal operation.value 'edit' %}
+              <td class="centeralign" style="border-right: 0">
+                <a href='{{ operation.url }}'>
+                  <i class="fa fa-file-text-o fa-lg"></i>
+                  <!--i class="fa fa-pencil-square-o fa-lg"></i-->
+                </a>
+              </td>
+            {% endifequal %}
+            {% ifequal operation.value 'delete' %}
+              <td class="centeralign" style="border-left: 0;">
+                <a href="{{ operation.url }}" class="deleterow1" >
+                  <i class="fa fa-trash-o fa-lg"></i>
+                </a>
+              </td>
+            {% endifequal %}
+          {% endfor %}
+        {% endif %}
+
+
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% include "common/snippet/paginator_snippet.html" %}
+
+
+{% else %}
+  <div class="divider30"></div>
+    <h2 class="text-center" style="color:grey;">No data found.</h2>
+{% endif %}
+
+

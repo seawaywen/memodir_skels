@@ -1,0 +1,34 @@
+    {% for field in form %}
+        {# Include the hidden field in the form #}
+        {% if forloop.first %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        {% endif %}
+
+        <div class="par control-group">
+          <label id="{{ field.id_for_label }}">{{ field.label }}
+            {% if field.field.required %}<span style="color: #ff0000; ">*</span>{% endif %}
+          </label>
+
+          <div class="control">
+            <table>
+              <tr><td>{{ field }}</td><tr>
+              {% if field.errors|length > 0 %}
+              <tr>
+                <td>
+                  <span class="help-inline " style="color: red;">
+                    {% for error in field.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </span>
+                </td>
+              </tr>
+              {% endif %}
+            </table>
+
+          </div>
+        </div>
+
+    {% endfor %}
+</table>

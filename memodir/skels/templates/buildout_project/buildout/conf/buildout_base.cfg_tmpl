@@ -56,7 +56,7 @@ develop =
     ../packages/qt_host
     ../packages/qt_atrr
 
-eggs = ${dependent_libs:core_eggs}
+eggs = \${dependent_libs:core_eggs}
 
 
 #------------------------
@@ -67,8 +67,8 @@ project = qt_atrr
 projectegg = qt_atrr
 settings = settings.base
 test = qt_atrr
-eggs = ${buildout:eggs}
-    ${product_package:eggs}
+eggs = \${buildout:eggs}
+    \${product_package:eggs}
     qt_atrr
 wsgi = true
 
@@ -78,8 +78,8 @@ project = qt_host
 projectegg = qt_host
 settings = settings.production
 test = qt_host
-eggs = ${buildout:eggs}
-    ${product_package:eggs}
+eggs = \${buildout:eggs}
+    \${product_package:eggs}
     qt_host
 wsgi = true
 
@@ -87,8 +87,8 @@ wsgi = true
 [python]
 recipe = zc.recipe.egg
 interpreter = python
-eggs = ${buildout:eggs}
-    ${product_package:eggs}
+eggs = \${buildout:eggs}
+    \${product_package:eggs}
     qt_host
     qt_atrr
 
@@ -111,48 +111,48 @@ nginx_conf =
 
 
 [ctl:windows]
-static_path = ${buildout:directory}\\..
-media_path = ${buildout:directory}\\..
-log_path = ${buildout:directory}\\..\logs\\
-apps_conf_path = ${buildout:directory}/../conf/nginx_server/*.conf
+static_path = \${buildout:directory}\\..
+media_path = \${buildout:directory}\\..
+log_path = \${buildout:directory}\\..\logs\\
+apps_conf_path = \${buildout:directory}/../conf/nginx_server/*.conf
 
-app_atrr_path = ${buildout:directory}\\..\\packages\\qt_atrr
-app_host_manager_path = ${buildout:directory}\\..\\packages\\qt_host
+app_atrr_path = \${buildout:directory}\\..\\packages\\qt_atrr
+app_host_manager_path = \${buildout:directory}\\..\\packages\\qt_host
 
-collectstatic_cmd_4_atrr = python ${buildout:directory}\bin\django_qt_atrr-script.py collectstatic --noinput
-collectstatic_cmd_4_host_manager = python ${buildout:directory}\bin\django_qt_host-script.py  collectstatic --noinput
+collectstatic_cmd_4_atrr = python \${buildout:directory}\bin\django_qt_atrr-script.py collectstatic --noinput
+collectstatic_cmd_4_host_manager = python \${buildout:directory}\bin\django_qt_host-script.py  collectstatic --noinput
 
-nginx_conf = ${buildout:directory}\parts\\nginx\\nginx-1.5.6\conf\\nginx.conf
+nginx_conf = \${buildout:directory}\parts\\nginx\\nginx-1.5.6\conf\\nginx.conf
 
 
 [ctl:posix]
-static_path = ${buildout:directory}/..
-media_path = ${buildout:directory}/..
-log_path = ${buildout:directory}/../logs/
-apps_conf_path = ${buildout:directory}/../conf/nginx_server/*.conf
+static_path = \${buildout:directory}/..
+media_path = \${buildout:directory}/..
+log_path = \${buildout:directory}/../logs/
+apps_conf_path = \${buildout:directory}/../conf/nginx_server/*.conf
 
-app_atrr_path =         ${buildout:directory}/../packages/qt_atrr
-app_host_manager_path = ${buildout:directory}/../packages/qt_host
+app_atrr_path =         \${buildout:directory}/../packages/qt_atrr
+app_host_manager_path = \${buildout:directory}/../packages/qt_host
 
-collectstatic_cmd_4_atrr = ${buildout:directory}/bin/django_qt_atrr collectstatic --noinput
-collectstatic_cmd_4_host_manager = ${buildout:directory}/bin/django_qt_host collectstatic --noinput
+collectstatic_cmd_4_atrr = \${buildout:directory}/bin/django_qt_atrr collectstatic --noinput
+collectstatic_cmd_4_host_manager = \${buildout:directory}/bin/django_qt_host collectstatic --noinput
 
-nginx_conf = ${buildout:directory}/etc/nginx/nginx.conf
+nginx_conf = \${buildout:directory}/etc/nginx/nginx.conf
 
 
 [nginx-conf]
 recipe = collective.recipe.template
-input = ${buildout:directory}/templates/nginx/nginx.conf.in
-output = ${ctl:nginx_conf}
+input = \${buildout:directory}/templates/nginx/nginx.conf.in
+output = \${ctl:nginx_conf}
 
-port = ${ports:nginx_prod}
-server_name = ${ctl:localhost}
+port = \${ports:nginx_prod}
+server_name = \${ctl:localhost}
 
-static_path = ${ctl:static_path}
-media_path = ${ctl:media_path}
-log_path = ${ctl:log_path}
-apps_conf_path = ${ctl:apps_conf_path}
-host_manager_conf_path = ${ctl:host_manager_conf_path}
+static_path = \${ctl:static_path}
+media_path = \${ctl:media_path}
+log_path = \${ctl:log_path}
+apps_conf_path = \${ctl:apps_conf_path}
+host_manager_conf_path = \${ctl:host_manager_conf_path}
 
 
 [collectstatic]
@@ -160,8 +160,8 @@ recipe = collective.recipe.cmd
 on_install = true
 on_update = true
 cmds =
-    ${ctl:collectstatic_cmd_4_host_manager}
-    ${ctl:collectstatic_cmd_4_atrr}
+    \${ctl:collectstatic_cmd_4_host_manager}
+    \${ctl:collectstatic_cmd_4_atrr}
 
 
 [product_package]

@@ -16,7 +16,7 @@ parts +=
 #nginx settings for Windows
 [nginx]
 recipe = hexagonit.recipe.download
-url = ${buildout:download-cache}/dist/nginx-1.5.6.zip
+url = \${buildout:download-cache}/dist/nginx-1.5.6.zip
 
 
 #------------------------
@@ -24,4 +24,4 @@ url = ${buildout:download-cache}/dist/nginx-1.5.6.zip
 [memcached]
 recipe = hexagonit.recipe.download
 ignore-existing = true
-url = ${buildout:download-cache}/dist/memcached-1.2.6-win32-with-msvcr71-bin.zip
+url = \${buildout:download-cache}/dist/memcached-1.2.6-win32-with-msvcr71-bin.zip

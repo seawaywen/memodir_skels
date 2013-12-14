@@ -1,0 +1,17 @@
+{% if filters_form %}
+  {% for filter in filters_form.filters %}
+    <p>
+      <label>{{ filter.title }}</label>
+      <span class="field">
+        <select class="selectpicker1" name="{{ filter.name }}" id="{{ filter.id }}"></select>
+        {% if filters_search_btn %}
+          {% if forloop.last  %}
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-primary" >
+              <i class="fa fa-search fa-lg"></i> &nbsp;&nbsp;Search</button>
+          {% endif %}
+        {% endif %}
+      </span>
+    </p>
+  {% endfor %}
+{% endif %}

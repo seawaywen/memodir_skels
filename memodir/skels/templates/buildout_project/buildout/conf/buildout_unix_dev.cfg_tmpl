@@ -24,12 +24,12 @@ recipe = zc.recipe.cmmi
 url = http://nginx.org/download/nginx-1.5.6.tar.gz
 ignore-existing = true
 extra_options =
-    --conf-path=${buildout:directory}/etc/nginx/nginx.conf
-    --error-log-path=${buildout:directory}/../logs/nginx-error.log
-    --http-log-path=${buildout:directory}/../logs/nginx-access.log
-    --pid-path=${buildout:directory}/var/run/nginx.pid
-    --lock-path=${buildout:directory}/var/lock/nginx.lock
-    --with-pcre=${pcre-source:location}
+    --conf-path=\${buildout:directory}/etc/nginx/nginx.conf
+    --error-log-path=\${buildout:directory}/../logs/nginx-error.log
+    --http-log-path=\${buildout:directory}/../logs/nginx-access.log
+    --pid-path=\${buildout:directory}/var/run/nginx.pid
+    --lock-path=\${buildout:directory}/var/lock/nginx.lock
+    --with-pcre=\${pcre-source:location}
 
 #------------------------
 #uwsgi settings
@@ -50,4 +50,4 @@ url = http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable
 [memcached]
 recipe = hexagonit.recipe.cmmi
 url = https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz
-configure-options = --with-libevent=${libevent:location}
+configure-options = --with-libevent=\${libevent:location}

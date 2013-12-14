@@ -17,5 +17,5 @@ parts +=
 
 [prod_package]
 recipe = zc.recipe.egg
-eggs = ${buildout:eggs}
-    ${product_package:eggs}
+eggs = \${buildout:eggs}
+    \${product_package:eggs}

@@ -43,8 +43,8 @@ project = qt_atrr
 projectegg = qt_atrr
 settings = settings.local
 test = qt_atrr
-eggs = ${django_qt_atrr:eggs}
-    ${dependent_libs:dev_eggs}
+eggs = \${django_qt_atrr:eggs}
+    \${dependent_libs:dev_eggs}
 wsgi = true
 
 [django_qt_host_dev]
@@ -53,12 +53,12 @@ project = qt_host
 projectegg = qt_host
 settings = settings.local
 test = qt_host
-eggs = ${django_qt_host:eggs}
-    ${dependent_libs:dev_eggs}
+eggs = \${django_qt_host:eggs}
+    \${dependent_libs:dev_eggs}
 wsgi = true
 
 [python_dev]
 recipe = zc.recipe.egg
 interpreter = python_dev
-eggs = ${python:eggs}
-    ${dependent_libs:dev_eggs}
+eggs = \${python:eggs}
+    \${dependent_libs:dev_eggs}

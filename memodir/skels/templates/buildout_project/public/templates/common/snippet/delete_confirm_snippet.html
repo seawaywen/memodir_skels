@@ -1,0 +1,23 @@
+<div class="text-center">
+  <h3 style="color: red;">{{ form_title }}</h3>
+</div>
+
+<div class="divider15"></div>
+
+<div class="widgetcontent bordered shadowed">
+  <ul class="list-unordered list-checked">
+  {% for item in delete_items_list %}
+    <li>{{ item }}</li>
+  {% endfor %}
+  </ul>
+</div>
+
+<div class="text-center">
+  <form action='.' method="post" >
+    {% csrf_token %}
+    <button class="btn btn-danger" type='submit'><i class="fa fa-times-circle fa-lg"></i> &nbsp;YES</button>
+    &nbsp;&nbsp;
+
+    <a class="btn" href='{{ back_url }}'><i class="fa fa-reply  fa-lg"></i> &nbsp;NO</a>
+  </form>
+</div>

@@ -1,0 +1,66 @@
+{% if columns %}
+var cols = []
+{% for column in columns %}
+    var col = {
+        name: "{{ column.name }}",
+        label: "{{ column.label }}",
+        editable: {{ column.editable }},
+        {% if column.sortable %}
+        sortable: {{ column.editable }},
+        {% endif %}
+    {% if column.cell == "fk" %}
+        cell: "qtUri",
+        fk_field: "{{ column.fk_field }}",
+        formatter: _.extend({}, Backgrid.CellFormatter.prototype, {
+          fromRaw: function (rawValue) {
+            return rawValue;
+          }
+        })
+    {% else %}
+        cell: "{{ column.cell }}"
+    {% endif %}
+    };
+    cols.push(col);
+{% endfor %}
+
+{% if not readonly %}
+    {% for operation in operation_list %}
+        var op = "{{ operation }}";
+        var op_col = {
+            name: op,
+            label: op.charAt(0).toUpperCase() + op.slice(1),
+            editable: false,
+            sortable: false,
+            cell: "qtOpration",
+        };
+       cols.push(op_col);
+    {% endfor %}
+{% endif %}
+
+var filters = [];
+{% if filters_form %}
+    {% for filter in filters_form.filters %}
+        filters.push({
+            title: "{{ filter.title }}",
+            name: "{{ filter.name }}",
+            id: "{{ filter.id }}",
+        {% if filter.level %}
+            level: {{ filter.level }},
+        {% else %}
+            level: 1,
+        {% endif %}
+        {% if filter.hasNext %}
+            hasNext: {{ filter.hasNext }},
+        {% else %}
+            hasNext: false,
+        {% endif %}
+        });
+    {% endfor %}
+{% endif %}
+
+var row = null;
+{% if gridrow %}
+    row = {{ gridrow }};
+{% endif %}
+QTGrid.RenderTo($("#datalist"), $("#filters"), "{{ api_url }}", cols, filters, row);
+{% endif %}

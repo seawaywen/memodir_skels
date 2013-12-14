@@ -1,0 +1,74 @@
+{% load static %}
+{% load i18n  %}
+{% load compressed %}
+
+<!doctype html>
+
+
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="ATRR, Auto Test Run Report" name="description"/>
+  <meta content="Kelvin Li, Eric Qu" name="author"/>
+
+  <title>{% block page_title %} ATRR {% endblock %}</title>
+
+  <link href="{% static 'admin/css/widgets.css' %}" type="text/css" media="screen" rel="stylesheet">
+
+  {% block core_css_import %}
+    {% compressed_css 'core' %}
+  {% endblock %}
+
+
+  <!-- BEGIN PAGE LEVEL RELOAD SCRIPTS FOR RUNTIME EMBEDDED JS IN HTML -->
+  {% block page_level_reload_js %}
+    <script type="text/javascript" src="{% static 'js/jquery-1.9.1.min.js' %}" charset="utf-8"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-migrate-1.1.1.min.js' %}" charset="utf-8"></script>
+  {% endblock page_level_reload_js%}
+  <!-- END PAGE LEVEL RELOAD SCRIPTS FOR RUNTIME EMBEDDED JS IN HTML -->
+
+  {% block css %}{% endblock css%}
+  <!-- BEGIN PAGE LEVEL STYLES -->
+  {% block page_level_css_import %}{% endblock page_level_css_import%}
+  <!-- END PAGE LEVEL STYLES -->
+
+  <!--link rel="shortcut icon" href="favicon.ico"/-->
+</head>
+
+<body style="background: #fff;">
+{% block body %}
+{% endblock body %}
+
+
+
+<!------------------------------------------------ -->
+<!-- BEGIN JAVASCRIPTS  -->
+
+<!-- BEGIN CORE PLUGINS -->
+{% block core_plugins %}
+  {% compressed_js 'core' %}
+{% endblock core_plugins %}
+<!-- END CORE PLUGINS -->
+
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+{% block page_level_plugins %}
+  <script type="text/javascript">window.__admin_media_prefix__ = "{%  static 'admin/' %}";</script>
+{% endblock page_level_plugins %}
+<!-- END PAGE LEVEL PLUGINS -->
+
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+{% block page_level_js_import %}{% endblock page_level_js_import%}
+<!-- END PAGE LEVEL SCRIPTS -->
+
+<script>
+{% block page_level_extra_js %}{% endblock page_level_extra_js %}
+{% block script %}{% endblock script %}
+</script>
+<!-- END JAVASCRIPTS -->
+
+
+</body>
+</html>

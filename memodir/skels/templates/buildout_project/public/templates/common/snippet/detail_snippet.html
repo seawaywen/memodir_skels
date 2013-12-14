@@ -1,0 +1,24 @@
+<div class="text-left ">
+  <a  href="{{ back_url }}">back to list</a>
+</div>
+
+<div class="divider15"></div>
+
+<table class="table table-bordered">
+  <caption><h2 style="text-align: left; padding: 6px;">{{ detail_title }}</h2></caption>
+
+  <tbody>
+  {% for key, value in  atrr_dict.iteritems %}
+  <tr>
+      <td style="text-align: right; width:20%; ">{{ key|upper }}</td>
+      <td style="font-weight:bold;">{{ value }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div class="divider30"></div>
+
+<div class="text-left">
+  <a  href="{{ back_url }}">back to list</a>
+</div>

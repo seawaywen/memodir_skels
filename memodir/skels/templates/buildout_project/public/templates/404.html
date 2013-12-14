@@ -1,0 +1,34 @@
+{% extends 'common/_base.html' %}
+
+{% block page_title %}404 page not found{% endblock %}
+
+
+{% block body %}
+
+<div class="fullwrapper">
+
+    <div class="logopanel">
+        <h1><a href="/default">ATRR <span>v3.0STD0</span></a></h1>
+    </div><!--logopanel-->
+
+
+    <div class="maincontent">
+      {% block maintent %}
+        <div id="message" style="text-align: center; margin-top: 15%;">
+              <h2>Ooops! 404 error</h2>
+              <p>The requested URL was not found on this server.</p>
+
+          </div>
+      {% endblock maintent %}
+    </div>
+
+
+    <div class="footer">
+        <div class="footerright">&copy; Nagravision 2012-2013 </div>
+    </div><!--footer-->
+
+</div>
+
+
+
+{% endblock body %}
