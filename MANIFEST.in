@@ -4,4 +4,4 @@ include LICENSE
 include CONTRIBUTORS
 include AUTHORS
 recursive-include memodir/skels *.txt *.py
-recursive-include memodir/skels/templates *.txt *.py *.*tmpl *.html *.in *.rst *.sh *.bat
+recursive-include memodir/skels/templates *.txt *.py *.*tmpl *.html *.in *.rst *.sh *.bat *.tar.gz
