@@ -41,18 +41,15 @@ find-links =
 
 parts =
     python
-    django_qt_atrr
+#    django_qt_atrr
     django_qt_host
 
     collectstatic
 
-#    qt_service
     qt_service_startup
     qt_service_shutdown
 
 develop =
-#    ../packages/qt.core
-#    ../packages/qt.deploy
     ../packages/qt_host
     ../packages/qt_atrr
 
@@ -60,7 +57,7 @@ eggs = \${dependent_libs:core_eggs}
 
 
 #------------------------
-#project PRODUCTION  mode setting
+#project PRODUCTION mode setting
 [django_qt_atrr]
 recipe = djangorecipe
 project = qt_atrr

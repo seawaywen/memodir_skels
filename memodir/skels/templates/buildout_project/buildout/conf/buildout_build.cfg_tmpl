@@ -10,7 +10,7 @@ local_egg_dir = atrr
 server_egg_dir = /var/www/html/eggs
 server_host = qt.hq.k.grp
 username = qtdeploy
-password = +5OCy%xWkiq8e%Cg
+password =
 
 
 [build_dist]

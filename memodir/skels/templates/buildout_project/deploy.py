@@ -8,7 +8,8 @@ import os
 from os.path import dirname, join, abspath
 from optparse import OptionParser
 
-#from tornado.log import LogFormatter
+
+project_name = 'ATRR'
 
 IS_PROD = True
 
@@ -126,6 +127,7 @@ class LogFormatter(logging.Formatter):
             formatted = '\n'.join(lines)
         return formatted.replace("\n", "\n    ")
 
+
 ############################################################
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO if IS_PROD else logging.DEBUG)
@@ -158,7 +160,7 @@ def print_error():
     logger.error("`------'`--' '--'`--' '--' `-----' `--' '--'")
 
 
-def print_atrr():
+def print_project_name():
     #http://patorjk.com/software/taag/#p=display&f=Soft&t=ATRR
     logger.warn("  ,---. ,--------.,------. ,------.")
     logger.warn(" /  O  \\'--.  .--'|  .--. '|  .--. '")
@@ -175,7 +177,7 @@ def _check_setuptools_version():
     logger.info('[CHECKING Setuptools]')
     splitter('-')
 
-    msg = 'Dependent Setuptools version for ATRR installation. [{0}]'
+    msg = 'Dependent Setuptools version for %s installation. [{0}]' % project_name
 
     try:
         import setuptools
@@ -223,7 +225,7 @@ def _check_command(cmd):
         logger.info('[CHECKING {0}]'.format(cmd))
         splitter('-')
 
-        msg = 'Dependent {1} for ATRR installation. [{0}]'
+        msg = 'Dependent {1} for {3} installation. [{0}]'
 
         command = ['which', cmd]
         try:
@@ -232,9 +234,9 @@ def _check_command(cmd):
             result = -1
 
         if result == 0:
-            logger.info(msg.format('OK', cmd))
+            logger.info(msg.format('OK', cmd, project_name))
         else:
-            logger.error(msg.format('failed', cmd))
+            logger.error(msg.format('failed', cmd, project_name))
             print_error()
             logger.info('Install {0} as prerequisite first.'.format(cmd))
             exit(0)
@@ -259,7 +261,7 @@ def _check_space_in_cur_dir():
     cur_dir = dirname(abspath(__file__))
     if cur_dir.find(' ') > 0:
         print_error()
-        logger.error('Please make sure ATRR\'s root path does NOT have SPACE')
+        logger.error('Please make sure {0}\'s root path does NOT have SPACE'.format(project_name))
         exit(0)
 
 
@@ -408,20 +410,20 @@ def setup_buildout_env():
 
 
 def set_env_vars():
-    os.environ['ATRR_HOME'] = dirname(abspath(__file__))
-    os.environ['ATRR_IS_PROD'] = str(IS_PROD)
+    os.environ['PROJECT_HOME'] = dirname(abspath(__file__))
+    os.environ['PROJECT_IS_PROD'] = str(IS_PROD)
 
 
 if __name__ == '__main__':
     usage = '''\
     [DESIRED PYTHON FOR APPLICATION] deploy.py [options]
 
-    Bootstraps atrr django application.
+    Bootstraps {0} django application.
 
     Simply run this script in a directory containing a buildout.cfg, using the
     Python that you want bin/buildout to use.
 
-    '''
+    '''.format(project_name)
 
     parser = OptionParser(usage=usage)
 
@@ -483,8 +485,8 @@ if __name__ == '__main__':
 
         splitter('*')
         splitter('*')
-        print_atrr()
-        logger.warn(' ' * 32 + 'ATRR [{0}] INSTALLATION {1} '.format('3.0STD0', '(dev mode)' if not IS_PROD else ''))
+        print_project_name()
+        logger.warn(' ' * 32 + '{2} [{0}] INSTALLATION {1} '.format('3.0STD0', '(dev mode)' if not IS_PROD else '', project_name))
         splitter('*')
         splitter('*')
 
@@ -504,6 +506,7 @@ if __name__ == '__main__':
 
             run_buildout()
 
+            """
             if os.path.exists(buildout_python):
                 subprocess.call([sys.executable, buildout_python, 'deploy.py'],
                                 shell=True if sys.platform == 'win32' else False)
@@ -513,82 +516,86 @@ if __name__ == '__main__':
                 print_error()
                 logger.info('Product running environment building failed.')
                 splitter('*')
+            """
 
             logger.info('\n')
         else:
             exit(0)
     else:
-        from qt.deploy.deploy import Deploy
+        try:
+            from qt.deploy.deploy import Deploy
 
-        deploy = Deploy()
+            deploy = Deploy()
 
-        if options.upgrade is not None and options.upgrade:
-            deploy.upgrade()
+            if options.upgrade is not None and options.upgrade:
+                deploy.upgrade()
 
-        if options.start is not None and options.start:
-            deploy.splitter()
-            deploy.start_default_app_server()
+            if options.start is not None and options.start:
+                deploy.splitter()
+                deploy.start_default_app_server()
 
-            #deploy.splitter()
-            #deploy.start_all_user_app_servers()
+                #deploy.splitter()
+                #deploy.start_all_user_app_servers()
 
-            deploy.splitter()
-            deploy.start_nginx_server()
+                deploy.splitter()
+                deploy.start_nginx_server()
 
-            deploy.splitter()
+                deploy.splitter()
 
-        elif options.restart is not None and options.restart:
-            #deploy.splitter()
-            #deploy.kill_all_app_servers()
+            elif options.restart is not None and options.restart:
+                #deploy.splitter()
+                #deploy.kill_all_app_servers()
 
-            deploy.splitter()
-            deploy.kill_all_app_servers()
+                deploy.splitter()
+                deploy.kill_all_app_servers()
 
-            deploy.splitter()
-            deploy.stop_default_app_server()
-            deploy.start_default_app_server()
+                deploy.splitter()
+                deploy.stop_default_app_server()
+                deploy.start_default_app_server()
 
-            #deploy.splitter()
-            #deploy.start_all_user_app_servers()
+                #deploy.splitter()
+                #deploy.start_all_user_app_servers()
 
-            deploy.splitter()
-            deploy.restart_nginx_server()
+                deploy.splitter()
+                deploy.restart_nginx_server()
 
-            deploy.splitter()
-            host_name, port, ip = (deploy.helper.get_host_name(),
-                                   deploy.get_web_server_port(),
-                                   deploy.helper.get_host_ip())
-            logger.info('\n')
-            deploy.splitter('*')
-            deploy.splitter('-')
-            logger.info("Service is up now")
-            deploy.splitter('-')
-            logger.info(' ')
-            logger.info("- Open one of following address in browser to visit the application.")
-            logger.info('  http://%s:%s' % (host_name, port))
-            logger.info('  http://%s:%s' % (deploy.helper.get_host_ip(), deploy.get_web_server_port()))
-            logger.info(' ')
-            deploy.splitter('*')
+                deploy.splitter()
+                host_name, port, ip = (deploy.helper.get_host_name(),
+                                       deploy.get_web_server_port(),
+                                       deploy.helper.get_host_ip())
+                logger.info('\n')
+                deploy.splitter('*')
+                deploy.splitter('-')
+                logger.info("Service is up now")
+                deploy.splitter('-')
+                logger.info(' ')
+                logger.info("- Open one of following address in browser to visit the application.")
+                logger.info('  http://%s:%s' % (host_name, port))
+                logger.info('  http://%s:%s' % (deploy.helper.get_host_ip(), deploy.get_web_server_port()))
+                logger.info(' ')
+                deploy.splitter('*')
 
-        elif options.stop is not None and options.stop:
-            deploy.splitter()
-            deploy.kill_all_app_servers()
-            deploy.stop_default_app_server()
+            elif options.stop is not None and options.stop:
+                deploy.splitter()
+                deploy.kill_all_app_servers()
+                deploy.stop_default_app_server()
 
-            deploy.splitter()
-            deploy.stop_nginx_server()
+                deploy.splitter()
+                deploy.stop_nginx_server()
 
-            deploy.splitter()
+                deploy.splitter()
 
-        elif options.stop_all is not None and options.stop_all:
-            deploy.splitter()
-            deploy.kill_all_app_servers()
-            deploy.stop_default_app_server()
-            deploy.kill_all_app_servers()
+            elif options.stop_all is not None and options.stop_all:
+                deploy.splitter()
+                deploy.kill_all_app_servers()
+                deploy.stop_default_app_server()
+                deploy.kill_all_app_servers()
 
-            deploy.splitter()
-            deploy.stop_nginx_server()
+                deploy.splitter()
+                deploy.stop_nginx_server()
 
-            deploy.splitter()
-        else:
-            deploy.deploy()
+                deploy.splitter()
+            else:
+                deploy.deploy()
+        except Exception:
+            logger.error('qt.deploy package non-existed!')

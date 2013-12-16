@@ -4,19 +4,12 @@ extends =
     buildout_service_unix.cfg
 
 parts +=
-#    env
-#    uwsgi
-#    uwsgi-make
     pcre-source
-
     nginx
     nginx-conf
 
-#    libevent
-#    memcached
-#    memcached-ctl
-#    start_memcached
-#    restart_memcached
+#    uwsgi
+#    uwsgi-make
 
 
 
@@ -43,6 +36,7 @@ extra_options =
     --lock-path=\${buildout:directory}/var/lock/nginx.lock
     --with-pcre=\${pcre-source:location}
 
+
 #------------------------
 #uwsgi settings
 [uwsgi]
@@ -50,16 +44,3 @@ recipe = gocept.download
 url = \${buildout:download-cache}/dist/uwsgi-1.4.5.tar.gz
 strip-top-level-dir = true
 md5sum = 391ff016fe8d8dbd83e62e9b86e2406f
-
-#------------------------
-#libevent
-[libevent]
-recipe = hexagonit.recipe.cmmi
-url = http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
-
-#------------------------
-#memcached
-[memcached]
-recipe = hexagonit.recipe.cmmi
-url = \${buildout:download-cache}/dist/memcached-1.4.15.tar.gz
-configure-options = --with-libevent=\${libevent:location}

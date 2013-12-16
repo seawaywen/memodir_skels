@@ -20,52 +20,6 @@ python-path = \${buildout:directory}
 
 
 #------------------------
-[memcached-ctl]
-recipe = ore.recipe.fs:mkfile
-path = \${buildout:bin-directory}/memcached
-mode = 0755
-content =
- #!/bin/sh
- PIDFILE=\${memcached:location}/memcached.pid
-    case "$1" in
-      start)
-       \${memcached:location}/bin/memcached -d -P \$PIDFILE
-        ;;
-      stop)
-        kill `cat \$PIDFILE`
-        ;;
-      restart|force-reload)
-        \$0 stop
-        sleep 1
-        \$0 start
-        ;;
-      *)
-        echo "Usage: \$SCRIPTNAME {start|stop|restart}" >&2
-        exit 1
-        ;;
-    esac
-
-[start_memcached]
-recipe = collective.recipe.cmd
-on_install = true
-cmds = \${buildout:directory}/bin/memcached start
-
-[restart_memcached]
-recipe = collective.recipe.cmd
-on_update = true
-cmds = \${buildout:directory}/bin/memcached restart
-
-
-[setup_env]
-recipe = collective.recipe.cmd
-on_install = true
-on_update = true
-cmds =
-  export PATH=\${buildout:directory}/qt_bin:\$PATH
-  env | grep PATH
-
-
-#------------------------
 #qt server commands settings
 [qt_service]
 recipe = collective.recipe.template

@@ -38,16 +38,3 @@ recipe = gocept.download
 url = http://projects.unbit.it/downloads/uwsgi-1.4.5.tar.gz
 strip-top-level-dir = true
 md5sum = 391ff016fe8d8dbd83e62e9b86e2406f
-
-#------------------------
-#libevent
-[libevent]
-recipe = hexagonit.recipe.cmmi
-url = http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
-
-#------------------------
-#memcached
-[memcached]
-recipe = hexagonit.recipe.cmmi
-url = https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz
-configure-options = --with-libevent=\${libevent:location}

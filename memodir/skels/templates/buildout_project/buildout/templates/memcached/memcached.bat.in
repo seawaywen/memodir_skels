@@ -1,5 +1,0 @@
-@echo off
-set ramSize=100
-
-sc create memcached binPath= "${memcached_dir}\memcached.exe -d runservice -m %ramSize%" start= auto DisplayName= "memcached"
-sc start memcached
