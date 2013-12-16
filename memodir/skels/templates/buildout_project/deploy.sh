@@ -1,1 +1,1 @@
-python deploy.py -i
+python deploy.py -b

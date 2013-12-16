@@ -20,19 +20,19 @@ find-links +=
 
 parts =
     python_dev
-    django_qt_atrr_dev
-    django_qt_host_dev
+#    django_qt_atrr_dev
+#    django_qt_host_dev
 
-    collectstatic
+#    collectstatic
 
 #    qt_service
-    qt_service_startup
-    qt_service_shutdown
+#    qt_service_startup
+#    qt_service_shutdown
 
 develop +=
-    ../packages/qt.core
-    ../packages/qt.deploy
-    ../packages/qt.recipes.build
+#    ../packages/qt.core
+#    ../packages/qt.deploy
+#    ../packages/qt.recipes.build
 
 
 #------------------------

@@ -9,9 +9,17 @@ from os.path import dirname, join, abspath
 from optparse import OptionParser
 
 
-project_name = 'ATRR'
+###########################
+# This variable is important
+PROJECT_NAME = 'ATRR'
+########################
 
+PROJECT_VERSION = '3.0STD0'
+
+###########################
+# DEBUG mode or not
 IS_PROD = True
+###########################
 
 
 if type('') is not type(b''):
@@ -127,7 +135,6 @@ class LogFormatter(logging.Formatter):
             formatted = '\n'.join(lines)
         return formatted.replace("\n", "\n    ")
 
-
 ############################################################
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO if IS_PROD else logging.DEBUG)
@@ -145,7 +152,26 @@ else:
     BUILDOUT_CMD = join(BUILDOUT_BIN_DIR, 'buildout')
 BUILDOUT_CFG = join(BUILDOUT_DIR, 'buildout.cfg')
 BUILDOUT_PROD_CFG = join(BUILDOUT_DIR, 'for_release.cfg')
-DOWNLOAD_DIR = join(BUILDOUT_DIR, join('downloads', 'dist'))
+DOWNLOAD_DIR = join(BUILDOUT_DIR, join('downloads' if IS_PROD else 'downloads_dev', 'dist'))
+
+_interpreter = 'python{0}'.format('_dev' if os.path.exists(join(BUILDOUT_BIN_DIR, 'python_dev')) else '')
+python_interpreter = '{0}{1}'.format(_interpreter, '-script.py' if sys.platform == 'win32' else '')
+buildout_python = join(BUILDOUT_BIN_DIR, python_interpreter)
+
+
+def is_bitnami_env():
+    return sys.executable.endswith('.python.bin')
+
+
+def get_executable_python():
+    import sys
+
+    if is_bitnami_env():
+        executable_python = 'python'
+    else:
+        executable_python = sys.executable
+
+    return executable_python
 
 
 def splitter(split):
@@ -177,7 +203,7 @@ def _check_setuptools_version():
     logger.info('[CHECKING Setuptools]')
     splitter('-')
 
-    msg = 'Dependent Setuptools version for %s installation. [{0}]' % project_name
+    msg = 'Dependent Setuptools version for {1} installation. [{0}]'
 
     try:
         import setuptools
@@ -185,9 +211,9 @@ def _check_setuptools_version():
         if version < '0.7':
             _install_setuptools()
         else:
-            logger.info(msg.format('OK'))
+            logger.info(msg.format('OK', PROJECT_NAME))
     except ImportError:
-        logger.error(msg.format('failed'))
+        logger.error(msg.format('failed', PROJECT_NAME))
 
         logger.error('Setuptools is not installed')
         logger.info('Prepare install setuptools...')
@@ -206,7 +232,7 @@ def _install_setuptools():
     command = r"cd utils " \
               " && " \
               "{0} {1} " \
-              "--download-base={2}".format(sys.executable,
+              "--download-base={2}".format(get_executable_python(),
                                            join(util_dir, 'ez_setup.py'),
                                            util_dir + os.sep)
     if sys.platform in ['linux2', 'darwin']:
@@ -225,7 +251,7 @@ def _check_command(cmd):
         logger.info('[CHECKING {0}]'.format(cmd))
         splitter('-')
 
-        msg = 'Dependent {1} for {3} installation. [{0}]'
+        msg = 'Dependent {1} for {2} installation. [{0}]'
 
         command = ['which', cmd]
         try:
@@ -234,9 +260,9 @@ def _check_command(cmd):
             result = -1
 
         if result == 0:
-            logger.info(msg.format('OK', cmd, project_name))
+            logger.info(msg.format('OK', cmd, PROJECT_NAME))
         else:
-            logger.error(msg.format('failed', cmd, project_name))
+            logger.error(msg.format('failed', cmd, PROJECT_NAME))
             print_error()
             logger.info('Install {0} as prerequisite first.'.format(cmd))
             exit(0)
@@ -261,7 +287,7 @@ def _check_space_in_cur_dir():
     cur_dir = dirname(abspath(__file__))
     if cur_dir.find(' ') > 0:
         print_error()
-        logger.error('Please make sure {0}\'s root path does NOT have SPACE'.format(project_name))
+        logger.error('Please make sure {0}\'s root path does NOT have SPACE'.format(PROJECT_NAME))
         exit(0)
 
 
@@ -281,7 +307,6 @@ def check_prerequisites():
     # check /usr/bin/mysql_config existed
     #todo: Package the Mysql-python lib with distribute
     #todo: test installing the reportlab without network connection
-
 
     logger.info(' ')
 
@@ -361,7 +386,7 @@ def run_buildout(task=None):
 
     buildout_cfg_file = BUILDOUT_PROD_CFG if IS_PROD else BUILDOUT_CFG
 
-    command = [sys.executable, BUILDOUT_CMD, ]
+    command = [get_executable_python(), BUILDOUT_CMD, ]
 
     if task is None:
         command.extend(['-c',
@@ -385,8 +410,9 @@ def setup_buildout_env():
     logger.info('Setup the BUILDOUT environment...')
     logger.info(' ')
 
+    _download_dir = 'downloads' if IS_PROD else 'downloads_dev'
     if not os.path.exists(DOWNLOAD_DIR):
-        logger.info('Download folder not existed, create new one...')
+        logger.info('{0} folder not existed, create new one...'.format(_download_dir))
         os.makedirs(DOWNLOAD_DIR)
 
         logger.debug('Copying the zc.buildout package to download folder to setup env.')
@@ -396,7 +422,7 @@ def setup_buildout_env():
 
     buildout_conf_file = BUILDOUT_PROD_CFG if IS_PROD else BUILDOUT_CFG
     command = [
-        sys.executable,
+        get_executable_python(),
         join(BUILDOUT_DIR, 'bootstrap.py'),
         '-c', buildout_conf_file,
         '-f', DOWNLOAD_DIR,
@@ -409,9 +435,83 @@ def setup_buildout_env():
     logger.debug('\n')
 
 
+def gen_key_by_proj_name(key, _project_name=None):
+    if key is None or key == '':
+        raise ValueError("{0} can't be None or empty")
+
+    if _project_name is None:
+        project_name = os.environ['QT_PROJ_NAME']
+    else:
+        project_name = _project_name
+
+    return '{0}_{1}'.format(project_name, key.upper())
+
+
 def set_env_vars():
-    os.environ['PROJECT_HOME'] = dirname(abspath(__file__))
-    os.environ['PROJECT_IS_PROD'] = str(IS_PROD)
+    os.environ['QT_PROJ_NAME'] = PROJECT_NAME
+    os.environ[gen_key_by_proj_name('HOME')] = dirname(abspath(__file__))
+    os.environ[gen_key_by_proj_name('IS_PROD')] = str(IS_PROD)
+
+
+def create_buildout_env():
+    if os.path.exists(buildout_python):
+        subprocess.call([get_executable_python(),
+                         buildout_python,
+                         'deploy.py',
+                         '-k'],
+                        shell=True if sys.platform == 'win32' else False)
+
+    if sys.platform == 'win32':
+        subprocess.call(['cls'], shell=True)
+    else:
+        subprocess.call('clear')
+
+    splitter('*')
+    splitter('*')
+
+    print_project_name()
+    logger.warn(' ' * 32 + '{0} [{1}] INSTALLATION {2} '.format(PROJECT_NAME,
+                                                                PROJECT_VERSION,
+                                                                '(dev mode)' if not IS_PROD else ''))
+
+    splitter('*')
+    splitter('*')
+
+    time.sleep(3)
+
+    logger.debug(' ')
+
+    platform_validation()
+
+    #check_admin_right()
+
+    if is_python_version_valid():
+
+        check_prerequisites()
+
+        setup_buildout_env()
+
+        run_buildout()
+
+        logger.info('\n')
+
+    else:
+        exit(0)
+
+
+def run_deploy():
+
+    if os.path.exists(buildout_python):
+        subprocess.call([get_executable_python(), buildout_python, 'deploy.py'],
+                        shell=True if sys.platform == 'win32' else False)
+    else:
+        logger.info('\n')
+        splitter('*')
+        print_error()
+        logger.info('Product running environment building failed.')
+        splitter('*')
+
+    logger.info('\n')
 
 
 if __name__ == '__main__':
@@ -423,9 +523,15 @@ if __name__ == '__main__':
     Simply run this script in a directory containing a buildout.cfg, using the
     Python that you want bin/buildout to use.
 
-    '''.format(project_name)
+    '''.format(PROJECT_NAME)
 
     parser = OptionParser(usage=usage)
+
+    parser.add_option("-b", "--build_env",
+                      dest="build_env",
+                      action="store_true",
+                      default=False,
+                      help="Setup buildout environment")
 
     parser.add_option("-i", "--init",
                       dest="init",
@@ -450,6 +556,7 @@ if __name__ == '__main__':
                       action="store_true",
                       default=False,
                       help="Stop host server")
+
     parser.add_option("-a", "--stop-all",
                       dest="stop_all",
                       action="store_true",
@@ -466,136 +573,91 @@ if __name__ == '__main__':
 
     set_env_vars()
 
-    if options.init is not None and options.init:
-        _interpreter = 'python{0}'.format('_dev' if os.path.exists(join(BUILDOUT_BIN_DIR, 'python_dev')) else '')
-        python_interpreter = '{0}{1}'.format(_interpreter, '-script.py' if sys.platform == 'win32' else '')
-        buildout_python = join(BUILDOUT_BIN_DIR, python_interpreter)
+    if options.build_env is not None and options.build_env:
+        create_buildout_env()
 
-        if os.path.exists(buildout_python):
-            subprocess.call([sys.executable,
-                             buildout_python,
-                             'deploy.py',
-                             '-k'],
-                            shell=True if sys.platform == 'win32' else False)
+    elif options.init is not None and options.init:
 
-        if sys.platform == 'win32':
-            subprocess.call(['cls'], shell=True)
-        else:
-            subprocess.call('clear')
+        create_buildout_env()
+        run_deploy()
 
-        splitter('*')
-        splitter('*')
-        print_project_name()
-        logger.warn(' ' * 32 + '{2} [{0}] INSTALLATION {1} '.format('3.0STD0', '(dev mode)' if not IS_PROD else '', project_name))
-        splitter('*')
-        splitter('*')
-
-        time.sleep(3)
-
-        logger.debug(' ')
-
-        platform_validation()
-
-        #check_admin_right()
-
-        if is_python_version_valid():
-
-            check_prerequisites()
-
-            setup_buildout_env()
-
-            run_buildout()
-
-            """
-            if os.path.exists(buildout_python):
-                subprocess.call([sys.executable, buildout_python, 'deploy.py'],
-                                shell=True if sys.platform == 'win32' else False)
-            else:
-                logger.info('\n')
-                splitter('*')
-                print_error()
-                logger.info('Product running environment building failed.')
-                splitter('*')
-            """
-
-            logger.info('\n')
-        else:
-            exit(0)
     else:
-        try:
-            from qt.deploy.deploy import Deploy
 
-            deploy = Deploy()
+        from qt.deploy.deploy import Deploy
 
-            if options.upgrade is not None and options.upgrade:
-                deploy.upgrade()
+        deploy = Deploy()
 
-            if options.start is not None and options.start:
-                deploy.splitter()
-                deploy.start_default_app_server()
+        if options.upgrade is not None and options.upgrade:
+            deploy.upgrade()
 
-                #deploy.splitter()
-                #deploy.start_all_user_app_servers()
+        if options.start is not None and options.start:
+            deploy.splitter()
+            deploy.start_default_app_server()
 
-                deploy.splitter()
-                deploy.start_nginx_server()
+            #deploy.splitter()
+            #deploy.start_all_user_app_servers()
 
-                deploy.splitter()
+            deploy.splitter()
+            deploy.start_nginx_server()
 
-            elif options.restart is not None and options.restart:
-                #deploy.splitter()
-                #deploy.kill_all_app_servers()
+            deploy.splitter()
 
-                deploy.splitter()
-                deploy.kill_all_app_servers()
+        elif options.restart is not None and options.restart:
+            #deploy.splitter()
+            #deploy.kill_all_app_servers()
 
-                deploy.splitter()
-                deploy.stop_default_app_server()
-                deploy.start_default_app_server()
+            deploy.splitter()
+            deploy.kill_all_app_servers()
 
-                #deploy.splitter()
-                #deploy.start_all_user_app_servers()
+            deploy.splitter()
+            deploy.stop_default_app_server()
+            deploy.start_default_app_server()
 
-                deploy.splitter()
-                deploy.restart_nginx_server()
+            #deploy.splitter()
+            #deploy.start_all_user_app_servers()
 
-                deploy.splitter()
-                host_name, port, ip = (deploy.helper.get_host_name(),
-                                       deploy.get_web_server_port(),
-                                       deploy.helper.get_host_ip())
-                logger.info('\n')
-                deploy.splitter('*')
-                deploy.splitter('-')
-                logger.info("Service is up now")
-                deploy.splitter('-')
-                logger.info(' ')
-                logger.info("- Open one of following address in browser to visit the application.")
-                logger.info('  http://%s:%s' % (host_name, port))
-                logger.info('  http://%s:%s' % (deploy.helper.get_host_ip(), deploy.get_web_server_port()))
-                logger.info(' ')
-                deploy.splitter('*')
+            deploy.splitter()
+            deploy.restart_nginx_server()
 
-            elif options.stop is not None and options.stop:
-                deploy.splitter()
-                deploy.kill_all_app_servers()
-                deploy.stop_default_app_server()
+            deploy.splitter()
+            host_name, port, ip = (deploy.helper.get_host_name(),
+                                   deploy.get_web_server_port(),
+                                   deploy.helper.get_host_ip())
+            logger.info('\n')
+            deploy.splitter('*')
+            deploy.splitter('-')
+            logger.info("Service is up now")
+            deploy.splitter('-')
+            logger.info(' ')
+            logger.info("- Open one of following address in browser to visit the application.")
+            logger.info('  http://%s:%s' % (host_name, port))
+            logger.info('  http://%s:%s' % (deploy.helper.get_host_ip(), deploy.get_web_server_port()))
+            logger.info(' ')
+            deploy.splitter('*')
 
-                deploy.splitter()
-                deploy.stop_nginx_server()
+        elif options.stop is not None and options.stop:
+            deploy.splitter()
+            deploy.kill_all_app_servers()
+            deploy.stop_default_app_server()
 
-                deploy.splitter()
+            deploy.splitter()
+            deploy.stop_nginx_server()
 
-            elif options.stop_all is not None and options.stop_all:
-                deploy.splitter()
-                deploy.kill_all_app_servers()
-                deploy.stop_default_app_server()
-                deploy.kill_all_app_servers()
+            deploy.splitter()
 
-                deploy.splitter()
-                deploy.stop_nginx_server()
+        elif options.stop_all is not None and options.stop_all:
+            deploy.splitter()
+            deploy.kill_all_app_servers()
+            deploy.stop_default_app_server()
+            deploy.kill_all_app_servers()
 
-                deploy.splitter()
-            else:
-                deploy.deploy()
-        except Exception:
-            logger.error('qt.deploy package non-existed!')
+            deploy.splitter()
+            deploy.stop_nginx_server()
+
+            deploy.splitter()
+        else:
+            deploy.deploy()
+
+        #try:
+        #except Exception:
+        #    raise ImportError('qt.deploy.deploy not existed')

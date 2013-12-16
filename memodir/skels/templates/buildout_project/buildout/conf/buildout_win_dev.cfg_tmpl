@@ -4,8 +4,8 @@ extends =
     buildout_service_win.cfg
 
 parts +=
-    nginx
-    nginx-conf
+#    nginx
+#    nginx-conf
 
 #------------------------
 #nginx settings for Windows

@@ -2,7 +2,6 @@
 extends =
     buildout_dependencies.cfg
     buildout_versions.cfg
-    buildout_ports.cfg
 
 newest = true
 
@@ -44,14 +43,14 @@ parts =
 #    django_qt_atrr
     django_qt_host
 
-    collectstatic
+#    collectstatic
 
-    qt_service_startup
-    qt_service_shutdown
+#    qt_service_startup
+#    qt_service_shutdown
 
 develop =
-    ../packages/qt_host
-    ../packages/qt_atrr
+#    ../packages/qt_host
+#    ../packages/qt_atrr
 
 eggs = \${dependent_libs:core_eggs}
 
@@ -69,16 +68,6 @@ eggs = \${buildout:eggs}
     qt_atrr
 wsgi = true
 
-[django_qt_host]
-recipe = djangorecipe
-project = qt_host
-projectegg = qt_host
-settings = settings.production
-test = qt_host
-eggs = \${buildout:eggs}
-    \${product_package:eggs}
-    qt_host
-wsgi = true
 
 
 [python]
@@ -86,8 +75,8 @@ recipe = zc.recipe.egg
 interpreter = python
 eggs = \${buildout:eggs}
     \${product_package:eggs}
-    qt_host
-    qt_atrr
+#    qt_host
+#    qt_atrr
 
 
 [ctl]
@@ -163,5 +152,5 @@ cmds =
 
 [product_package]
 eggs =
-    qt.core
-    qt.deploy
+#    qt.core
+#    qt.deploy

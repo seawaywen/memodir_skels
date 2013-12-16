@@ -4,9 +4,9 @@ extends =
     buildout_service_unix.cfg
 
 parts +=
-    pcre-source
-    nginx
-    nginx-conf
+#    pcre-source
+#    nginx
+#    nginx-conf
 
 #------------------------
 #nginx dependent library
